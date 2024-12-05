@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Response;
 
 class Task {
   public function __construct(
@@ -11,8 +12,7 @@ class Task {
     public bool $completed,
     public string $created_at,
     public string $updated_at
-  ) {
-  }
+  ) {}
 }
 
 $tasks = [
@@ -54,27 +54,48 @@ $tasks = [
   ),
 ];
 
-// Welcome URL
-Route::get('/', function ()use($tasks) {
-    return view('index', [
-        'tasks' => $tasks,
-    ]);
-})  -> name('welcome');
+Route::get('/', function () {
+  return redirect() -> route('tasks.index');
+}) -> name('tasks.index.redirect');
 
-// Greeting URL
-Route::get('/hello', function () {
-    return "Hello world!";
-}) -> name('greeting');
+Route::get('/tasks', function () use ($tasks) {
+  return view('index', [
+    'tasks' => $tasks,
+  ]);
+}) -> name('tasks.index');
 
-// Greeting by name
-Route::get("/hello/{name}", function ($name) {
-    return 'Hello' . $name . '!';
-}) -> name('greeting by name');
+Route::get('/tasks/{id}', function ($id) use( $tasks) {
+  $task = collect($tasks) -> firstWhere('id', $id);
 
-// Redirecting URL by name
-Route::get('/hallo', function() {
-    return redirect() -> route('greeting');
-});
+  if(!$task) {
+    return view('404');
+  }
+
+  return view('task', ['task' => $task]);
+}) -> name('tasks.task');
+
+
+// // Welcome URL
+// Route::get('/', function ()use($tasks) {
+//     return view('index', [
+//         'tasks' => $tasks,
+//     ]);
+// })  -> name('welcome');
+
+// // Greeting URL
+// Route::get('/hello', function () {
+//     return "Hello world!";
+// }) -> name('greeting');
+
+// // Greeting by name
+// Route::get("/hello/{name}", function ($name) {
+//     return 'Hello' . $name . '!';
+// }) -> name('greeting by name');
+
+// // Redirecting URL by name
+// Route::get('/hallo', function() {
+//     return redirect() -> route('greeting');
+// });
 
 Route::fallback(function() {
     return view('404');

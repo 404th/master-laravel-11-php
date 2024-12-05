@@ -1,24 +1,21 @@
-<h1>
-    The list of tasks
-</h1>
+@extends('layout.app')
 
-@isset($tasks)
-    <div>
-        @if (count($tasks) > 0)
-            @foreach ($tasks as $task)
-                <div>
-                    <h5><?= $task -> $title ?></h5>
-                    <h5>Description: </h5>
-                    <p><?= $task -> $description ?></p>
-                    <h5>Long desctiption: </h5>
-                    <p>Description: <?= @isset( $task -> $long_description ) ? $task -> $long_description : '...' ?></p>
-                    <p>Completed: <?= $task -> $completed ? '🟢' : '🔴' ?></p>
-                    <p>Created at: <?= $task -> $created_at ?></p>
-                    <p>Updated at: <?= $task -> $updated_at ?></p>
-                </div>
-            @endforeach
+@section('title', 'The list of tasks')
+
+@section('content')
+    <div class="task-list-container">
+        @isset($tasks)
+            @if (count($tasks))
+                @foreach ($tasks as $task)
+                    <div class="task-item">
+                        <a href="{{ route('tasks.task', ['id' => $task->id]) }}">{{ $task->title }}</a>
+                    </div>
+                @endforeach
+            @else
+                <div class="no-tasks">There are no tasks!</div>
+            @endif
         @else
-            <div>There are no tasks!</div>
-        @endif
+            <div class="no-tasks">No tasks to display.</div>
+        @endisset
     </div>
-@endisset
+@endsection
