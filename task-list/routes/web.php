@@ -58,44 +58,21 @@ Route::get('/', function () {
   return redirect() -> route('tasks.index');
 }) -> name('tasks.index.redirect');
 
-Route::get('/tasks', function () use ($tasks) {
+Route::get('/tasks', function () {
   return view('index', [
-    'tasks' => $tasks,
+    // 'tasks' => \App\Models\Task::all(),
+    // 'tasks' => \App\Models\Task::latest() -> get(),
+    'tasks' => \App\Models\Task::latest()->get()
   ]);
 }) -> name('tasks.index');
 
-Route::get('/tasks/{id}', function ($id) use( $tasks) {
-  $task = collect($tasks) -> firstWhere('id', $id);
+Route::view('/tasks/create', 'create');
 
-  if(!$task) {
-    return view('404');
-  }
-
-  return view('task', ['task' => $task]);
+Route::get('/tasks/{id}', function ($id) {
+  return view('task', [
+    'task' => \App\Models\Task::findOrFail($id)
+  ]);
 }) -> name('tasks.task');
-
-
-// // Welcome URL
-// Route::get('/', function ()use($tasks) {
-//     return view('index', [
-//         'tasks' => $tasks,
-//     ]);
-// })  -> name('welcome');
-
-// // Greeting URL
-// Route::get('/hello', function () {
-//     return "Hello world!";
-// }) -> name('greeting');
-
-// // Greeting by name
-// Route::get("/hello/{name}", function ($name) {
-//     return 'Hello' . $name . '!';
-// }) -> name('greeting by name');
-
-// // Redirecting URL by name
-// Route::get('/hallo', function() {
-//     return redirect() -> route('greeting');
-// });
 
 Route::fallback(function() {
     return view('404');
